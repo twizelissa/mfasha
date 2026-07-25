@@ -567,11 +567,24 @@ export default function HomePage() {
               <p className="text-xs text-zinc-500 mt-0.5">Specify response configurations</p>
             </div>
 
-            {/* Slider */}
+            {/* Slider & Manual Input */}
             <div className="space-y-3 text-left">
-              <div className="flex justify-between text-xs font-semibold">
+              <div className="flex justify-between items-center text-xs font-semibold">
                 <span className="text-zinc-400">Response Quantity</span>
-                <span className="text-emerald-400 font-bold">{responseCount} records</span>
+                <div className="flex items-center gap-1.5">
+                  <input
+                    type="number"
+                    min={10}
+                    max={500}
+                    value={responseCount}
+                    onChange={(e) => {
+                      const val = Math.max(10, Math.min(500, Number(e.target.value)));
+                      setResponseCount(val);
+                    }}
+                    className="w-16 bg-zinc-900 border border-zinc-800 rounded px-2 py-0.5 text-xs text-white text-center font-bold focus:outline-none focus:border-emerald-500"
+                  />
+                  <span className="text-emerald-400 font-bold">records</span>
+                </div>
               </div>
               <input
                 type="range"
