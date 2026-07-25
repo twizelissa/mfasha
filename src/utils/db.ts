@@ -2,12 +2,29 @@ import { Pool } from "pg";
 
 const connectionString = process.env.DATABASE_URL;
 
-export const pool = new Pool({
+let poolConfig: any = {
   connectionString,
-  ssl: connectionString && !connectionString.includes("localhost") && !connectionString.includes("127.0.0.1")
-    ? { rejectUnauthorized: false }
-    : undefined,
-});
+};
+
+if (connectionString && !connectionString.includes("localhost") && !connectionString.includes("127.0.0.1")) {
+  try {
+    const url = new URL(connectionString);
+    poolConfig = {
+      user: decodeURIComponent(url.username),
+      password: decodeURIComponent(url.password),
+      host: url.hostname,
+      port: parseInt(url.port || "5432", 10),
+      database: url.pathname.substring(1),
+      ssl: {
+        rejectUnauthorized: false,
+      },
+    };
+  } catch (e) {
+    console.error("Failed to parse DATABASE_URL, falling back to connectionString:", e);
+  }
+}
+
+export const pool = new Pool(poolConfig);
 
 let initialized = false;
 

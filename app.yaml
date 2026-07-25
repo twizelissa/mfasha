@@ -1,0 +1,43 @@
+name: form-flo
+region: nyc
+services:
+  - name: form-flo-web
+    github:
+      repo: twizelissa/mfasha
+      branch: main
+      deploy_on_push: true
+    build_command: npm run build
+    run_command: npm start
+    instance_size_slug: basic-xxs
+    http_port: 3000
+    routes:
+      - path: /
+    envs:
+      - key: DATABASE_URL
+        scope: RUN_TIME
+        value: ${formflo-db.DATABASE_URL}
+      - key: NEXT_PUBLIC_FIREBASE_API_KEY
+        scope: RUN_AND_BUILD_TIME
+        value: "AIzaSyCgvUb7r5Dw2ivMkSKwyjK_noQkEgOUPiM"
+      - key: NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
+        scope: RUN_AND_BUILD_TIME
+        value: "mfasha-survey-elissa.firebaseapp.com"
+      - key: NEXT_PUBLIC_FIREBASE_PROJECT_ID
+        scope: RUN_AND_BUILD_TIME
+        value: "mfasha-survey-elissa"
+      - key: NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
+        scope: RUN_AND_BUILD_TIME
+        value: "mfasha-survey-elissa.firebasestorage.app"
+      - key: NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID
+        scope: RUN_AND_BUILD_TIME
+        value: "696532179670"
+      - key: NEXT_PUBLIC_FIREBASE_APP_ID
+        scope: RUN_AND_BUILD_TIME
+        value: "1:696532179670:web:9faabb8e83962e49fc4777"
+      - key: PAYPACK_ENVIRONMENT
+        scope: RUN_TIME
+        value: "development"
+databases:
+  - name: formflo-db
+    engine: PG
+    production: false
