@@ -1,5 +1,8 @@
 name: form-flo
 region: nyc
+domains:
+  - domain: mfasha.tech
+    type: PRIMARY
 services:
   - name: form-flo-web
     github:
