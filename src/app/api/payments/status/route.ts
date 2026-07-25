@@ -11,7 +11,7 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: "Missing transaction ID" }, { status: 400 });
     }
 
-    const payments = getPayments();
+    const payments = await getPayments();
     const payment = payments.find(p => p.id === id);
 
     if (!payment) {
@@ -30,10 +30,10 @@ export async function GET(req: Request) {
           const liveStatus = await checkPaypackStatus(id);
           
           if (liveStatus === "successful") {
-            updatePaymentStatus(id, "approved");
+            await updatePaymentStatus(id, "approved");
             payment.status = "approved";
           } else if (liveStatus === "failed") {
-            updatePaymentStatus(id, "rejected");
+            await updatePaymentStatus(id, "rejected");
             payment.status = "rejected";
           }
         } catch (err) {

@@ -19,7 +19,7 @@ export async function POST(req: Request) {
 
       // Save the pending payment transaction in the local DB
       // We use Paypack's transaction reference as the unique ID
-      const payment = savePayment({
+      const payment = await savePayment({
         id: cashinData.ref,
         payerName: `MOMO (${phone})`,
         amount,
@@ -40,7 +40,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
 
-    const payment = savePayment({
+    const payment = await savePayment({
       id: transactionId,
       payerName,
       amount,

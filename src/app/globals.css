@@ -1,25 +1,25 @@
 @import "tailwindcss";
 
 :root {
-  --background: #050508;
-  --foreground: #f4f4f5;
-  --card: #09090c;
-  --card-foreground: #f4f4f5;
-  --popover: #09090c;
-  --popover-foreground: #f4f4f5;
-  --primary: #6366f1;
-  --primary-foreground: #ffffff;
-  --secondary: #27272a;
-  --secondary-foreground: #f4f4f5;
-  --muted: #27272a;
-  --muted-foreground: #a1a1aa;
-  --accent: #27272a;
-  --accent-foreground: #f4f4f5;
+  --background: #030805;          /* Rich forest-black */
+  --foreground: #f2f7f4;          /* Soft green-white */
+  --card: #08120c;                /* Deep forest-dark card */
+  --card-foreground: #f2f7f4;
+  --popover: #08120c;
+  --popover-foreground: #f2f7f4;
+  --primary: #10b981;             /* Vibrant emerald green */
+  --primary-foreground: #020a05;  /* Dark text on primary */
+  --secondary: #0c2014;           /* Darker forest green secondary */
+  --secondary-foreground: #cfeade; /* High-contrast soft green */
+  --muted: #0d1a12;
+  --muted-foreground: #7aa08b;    /* Sage green */
+  --accent: #112d1c;
+  --accent-foreground: #f2f7f4;
   --destructive: #ef4444;
   --destructive-foreground: #ffffff;
-  --border: #18181b;
-  --input: #18181b;
-  --ring: #6366f1;
+  --border: #142a1d;              /* Muted green-border */
+  --input: #0b1a11;
+  --ring: #10b981;
   --radius: 0.75rem;
 }
 
@@ -52,44 +52,53 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #09090c;
+  background: #08120c;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #27272a;
+  background: #142a1d;
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #3f3f46;
+  background: #1e3f2c;
 }
 
 /* Glassmorphism utility */
 .glass {
-  background: rgba(9, 9, 12, 0.7);
+  background: rgba(8, 18, 12, 0.75);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(16, 185, 129, 0.05);
 }
 
 .glass-glow {
-  background: rgba(99, 102, 241, 0.05);
+  background: rgba(16, 185, 129, 0.04);
   backdrop-filter: blur(8px);
-  border: 1px solid rgba(99, 102, 241, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.12);
 }
 
 /* Animations */
 @keyframes pulse-slow {
   0%, 100% {
-    opacity: 0.15;
+    opacity: 0.12;
     transform: scale(1);
   }
   50% {
-    opacity: 0.3;
-    transform: scale(1.05);
+    opacity: 0.24;
+    transform: scale(1.03);
   }
 }
 
 .animate-pulse-slow {
   animation: pulse-slow 8s infinite ease-in-out;
 }
+
+/* Technical grid background like premium SaaS products */
+.tech-grid {
+  background-image: linear-gradient(rgba(16, 185, 129, 0.04) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(16, 185, 129, 0.04) 1px, transparent 1px);
+  background-size: 32px 32px;
+  background-position: center center;
+}
+

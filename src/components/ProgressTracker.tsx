@@ -43,26 +43,26 @@ export default function ProgressTracker({
         <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${
           isCompleted 
             ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/15" 
-            : "bg-indigo-500/10 text-indigo-400 border border-indigo-500/15 animate-pulse"
+            : "bg-emerald-500/10 text-emerald-400 border border-emerald-500/15 animate-pulse"
         }`}>
           {isCompleted ? "Finished" : "Processing"}
         </span>
       </div>
-
+ 
       {/* Progress Bar & Percentage */}
       <div className="space-y-2">
         <div className="flex justify-between text-sm font-semibold">
           <span className="text-zinc-300">Submitting responses...</span>
-          <span className="text-indigo-400">{percent}% ({current}/{total})</span>
+          <span className="text-emerald-400">{percent}% ({current}/{total})</span>
         </div>
         <div className="h-2.5 w-full bg-zinc-900 rounded-full overflow-hidden border border-zinc-800">
           <div
-            className="h-full bg-gradient-to-r from-indigo-500 via-purple-500 to-indigo-500 rounded-full transition-all duration-300 ease-out"
+            className="h-full bg-gradient-to-r from-emerald-500 via-teal-400 to-emerald-500 rounded-full transition-all duration-300 ease-out"
             style={{ width: `${percent}%` }}
           />
         </div>
       </div>
-
+ 
       {/* Stats Cards */}
       <div className="grid grid-cols-2 gap-4">
         <div className="bg-zinc-900/40 border border-zinc-850 p-4 rounded-xl flex items-center justify-between">
@@ -85,7 +85,7 @@ export default function ProgressTracker({
           </div>
         </div>
       </div>
-
+ 
       {/* Terminal logs shell */}
       <div className="space-y-2">
         <div className="flex justify-between items-center">
@@ -117,8 +117,8 @@ export default function ProgressTracker({
             );
           })}
           {!isCompleted && (
-            <div className="text-indigo-400 animate-pulse flex items-center gap-1.5 mt-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-ping" />
+            <div className="text-emerald-400 animate-pulse flex items-center gap-1.5 mt-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
               <span>Streaming payload submissions...</span>
             </div>
           )}

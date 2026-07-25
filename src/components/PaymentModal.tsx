@@ -36,8 +36,6 @@ export default function PaymentModal({
   const [cardCvv, setCardCvv] = useState("");
   const [cardName, setCardName] = useState("");
 
-  if (!isOpen) return null;
-
   useEffect(() => {
     const checkPaypackConfig = async () => {
       try {
@@ -92,6 +90,8 @@ export default function PaymentModal({
 
     return () => clearInterval(intervalId);
   }, [momoStep, transactionId, onSuccess, momoSubTab]);
+
+  if (!isOpen) return null;
 
   const handleMomoSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -166,10 +166,10 @@ export default function PaymentModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-      <div className="w-full max-w-md bg-zinc-950 border border-zinc-800 rounded-2xl overflow-hidden shadow-2xl shadow-indigo-500/5">
+      <div className="w-full max-w-md bg-zinc-950 border border-zinc-900 rounded-2xl overflow-hidden shadow-2xl shadow-emerald-500/5">
         
         {/* Header */}
-        <div className="px-6 py-5 border-b border-zinc-800/80 flex items-center justify-between">
+        <div className="px-6 py-5 border-b border-zinc-900 flex items-center justify-between">
           <div>
             <h3 className="font-semibold text-lg text-white">Complete Payment</h3>
             <p className="text-xs text-zinc-400 mt-0.5">
@@ -178,18 +178,18 @@ export default function PaymentModal({
           </div>
           <div className="text-right">
             <span className="text-xs text-zinc-400 block font-medium">Total Price</span>
-            <span className="font-bold text-lg text-indigo-400">{amount.toLocaleString()} RWF</span>
+            <span className="font-bold text-lg text-emerald-400">{amount.toLocaleString()} RWF</span>
           </div>
         </div>
-
+ 
         {/* Tabs */}
         {momoStep === "input" && (
-          <div className="flex border-b border-zinc-850">
+          <div className="flex border-b border-zinc-900">
             <button
               onClick={() => setActiveTab("momo")}
-              className={`flex-1 py-3.5 text-center text-sm font-semibold border-b-2 transition-all ${
+              className={`flex-1 py-3.5 text-center text-sm font-semibold border-b-2 transition-all cursor-pointer ${
                 activeTab === "momo"
-                  ? "border-indigo-500 text-indigo-400 bg-indigo-500/5"
+                  ? "border-emerald-500 text-emerald-400 bg-emerald-500/5"
                   : "border-transparent text-zinc-400 hover:text-zinc-300"
               }`}
             >
@@ -197,9 +197,9 @@ export default function PaymentModal({
             </button>
             <button
               onClick={() => setActiveTab("card")}
-              className={`flex-1 py-3.5 text-center text-sm font-semibold border-b-2 transition-all ${
+              className={`flex-1 py-3.5 text-center text-sm font-semibold border-b-2 transition-all cursor-pointer ${
                 activeTab === "card"
-                  ? "border-indigo-500 text-indigo-400 bg-indigo-500/5"
+                  ? "border-emerald-500 text-emerald-400 bg-emerald-500/5"
                   : "border-transparent text-zinc-400 hover:text-zinc-300"
               }`}
             >
@@ -207,7 +207,7 @@ export default function PaymentModal({
             </button>
           </div>
         )}
-
+ 
         {/* Content */}
         <div className="p-6">
           {activeTab === "momo" ? (
@@ -219,7 +219,7 @@ export default function PaymentModal({
                   <button
                     type="button"
                     onClick={() => setMomoProvider("mtn")}
-                    className={`flex flex-col items-center justify-center p-3 rounded-xl border transition-all ${
+                    className={`flex flex-col items-center justify-center p-3 rounded-xl border transition-all cursor-pointer ${
                       momoProvider === "mtn"
                         ? "border-yellow-500 bg-yellow-500/5 text-yellow-500"
                         : "border-zinc-850 hover:border-zinc-700 text-zinc-400"
@@ -230,7 +230,7 @@ export default function PaymentModal({
                   <button
                     type="button"
                     onClick={() => setMomoProvider("airtel")}
-                    className={`flex flex-col items-center justify-center p-3 rounded-xl border transition-all ${
+                    className={`flex flex-col items-center justify-center p-3 rounded-xl border transition-all cursor-pointer ${
                       momoProvider === "airtel"
                         ? "border-red-500 bg-red-500/5 text-red-500"
                         : "border-zinc-850 hover:border-zinc-700 text-zinc-400"
@@ -239,7 +239,7 @@ export default function PaymentModal({
                     <span className="text-xs font-bold uppercase tracking-wider">Airtel Money</span>
                   </button>
                 </div>
-
+ 
                 {/* Sub tabs: Instant Prompt vs Manual Fallback */}
                 {hasPaypack && (
                   <div className="flex bg-zinc-900/50 p-1 rounded-xl border border-zinc-800/80">
@@ -249,13 +249,13 @@ export default function PaymentModal({
                         setMomoSubTab("prompt");
                         setMomoError("");
                       }}
-                      className={`flex-1 py-2 text-center text-xs font-semibold rounded-lg transition-all ${
+                      className={`flex-1 py-2 text-center text-xs font-semibold rounded-lg transition-all cursor-pointer ${
                         momoSubTab === "prompt"
-                          ? "bg-indigo-600 text-white shadow-md shadow-indigo-600/10"
+                          ? "bg-emerald-600 text-white shadow-md shadow-emerald-600/10"
                           : "text-zinc-400 hover:text-zinc-200"
                       }`}
                     >
-                      ⚡ Instant Prompt
+                      Instant Prompt
                     </button>
                     <button
                       type="button"
@@ -263,9 +263,9 @@ export default function PaymentModal({
                         setMomoSubTab("manual");
                         setMomoError("");
                       }}
-                      className={`flex-1 py-2 text-center text-xs font-semibold rounded-lg transition-all ${
+                      className={`flex-1 py-2 text-center text-xs font-semibold rounded-lg transition-all cursor-pointer ${
                         momoSubTab === "manual"
-                          ? "bg-indigo-600 text-white shadow-md shadow-indigo-600/10"
+                          ? "bg-emerald-600 text-white shadow-md shadow-emerald-600/10"
                           : "text-zinc-400 hover:text-zinc-200"
                       }`}
                     >
@@ -273,7 +273,7 @@ export default function PaymentModal({
                     </button>
                   </div>
                 )}
-
+ 
                 {momoSubTab === "prompt" ? (
                   /* Instant Prompt Fields */
                   <div className="space-y-1.5">
@@ -284,7 +284,7 @@ export default function PaymentModal({
                       placeholder="e.g. 0788123456"
                       value={phoneNumber}
                       onChange={(e) => setPhoneNumber(e.target.value.replace(/[^0-9]/g, ""))}
-                      className="w-full px-4 py-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-sm focus:outline-none focus:border-indigo-500 transition-all font-semibold"
+                      className="w-full px-4 py-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-sm focus:outline-none focus:border-emerald-500 transition-all font-semibold"
                     />
                     <p className="text-[10px] text-zinc-500">
                       Enter your MTN MoMo or Airtel Money number. You will receive a secure prompt on your device to authorize the payment.
@@ -305,12 +305,12 @@ export default function PaymentModal({
                           {momoProvider === "mtn" ? "MTN MoMo" : "Airtel Money"}
                         </span>
                       </div>
-                      <div className="flex items-center justify-between bg-black border border-zinc-850 px-4 py-3 rounded-lg font-mono text-sm text-indigo-400 font-bold tracking-wider">
+                      <div className="flex items-center justify-between bg-black border border-zinc-850 px-4 py-3 rounded-lg font-mono text-sm text-emerald-400 font-bold tracking-wider">
                         <span>*182*8*1*566832#</span>
                         <button
                           type="button"
                           onClick={() => navigator.clipboard.writeText("*182*8*1*566832#")}
-                          className="text-[10px] bg-zinc-900 hover:bg-zinc-850 text-zinc-400 hover:text-white px-2 py-1 rounded border border-zinc-800 transition-all active:scale-95"
+                          className="text-[10px] bg-zinc-900 hover:bg-zinc-850 text-zinc-400 hover:text-white px-2 py-1 rounded border border-zinc-800 transition-all active:scale-95 cursor-pointer"
                         >
                           Copy
                         </button>
@@ -321,7 +321,7 @@ export default function PaymentModal({
                         <p>3. Complete request by typing your MoMo PIN.</p>
                       </div>
                     </div>
-
+ 
                     {/* Payer Name */}
                     <div className="space-y-1.5">
                       <label className="text-xs font-semibold text-zinc-400">Payer MoMo Registered Name</label>
@@ -331,11 +331,11 @@ export default function PaymentModal({
                         placeholder="e.g. Jean Damascene"
                         value={momoName}
                         onChange={(e) => setMomoName(e.target.value)}
-                        className="w-full px-4 py-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-sm focus:outline-none focus:border-indigo-500 transition-all font-semibold"
+                        className="w-full px-4 py-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-sm focus:outline-none focus:border-emerald-500 transition-all font-semibold"
                       />
                       <p className="text-[10px] text-zinc-500">The full name registered under the Mobile Money phone number used.</p>
                     </div>
-
+ 
                     {/* Transaction ID */}
                     <div className="space-y-1.5">
                       <label className="text-xs font-semibold text-zinc-400">Transaction ID / Reference Number</label>
@@ -345,34 +345,34 @@ export default function PaymentModal({
                         placeholder="e.g. 566832104"
                         value={transactionId}
                         onChange={(e) => setTransactionId(e.target.value.replace(/[^a-zA-Z0-9]/g, ""))}
-                        className="w-full px-4 py-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-sm focus:outline-none focus:border-indigo-500 transition-all font-mono"
+                        className="w-full px-4 py-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-sm focus:outline-none focus:border-emerald-500 transition-all font-mono"
                       />
                       <p className="text-[10px] text-zinc-500">Enter the reference code from your MoMo receipt SMS to verify and authorize.</p>
                     </div>
                   </>
                 )}
-
+ 
                 {momoError && (
                   <p className="text-xs text-rose-400 font-medium bg-rose-500/5 border border-rose-500/10 p-2.5 rounded-xl">
                     ⚠ {momoError}
                   </p>
                 )}
-
+ 
                 <div className="pt-2 flex gap-3">
                   <button
                     type="button"
                     onClick={onClose}
-                    className="flex-1 py-2.5 bg-zinc-900 hover:bg-zinc-850 border border-zinc-800 text-zinc-300 font-semibold text-sm rounded-xl transition-all"
+                    className="flex-1 py-2.5 bg-zinc-900 hover:bg-zinc-850 border border-zinc-800 text-zinc-300 font-semibold text-sm rounded-xl transition-all cursor-pointer"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={isProcessing}
-                    className="flex-1 py-2.5 bg-indigo-600 hover:bg-indigo-500 disabled:bg-indigo-800 text-white font-semibold text-sm rounded-xl shadow-lg shadow-indigo-500/10 active:scale-95 transition-all flex items-center justify-center"
+                    className="flex-1 py-2.5 bg-emerald-600 hover:bg-emerald-500 disabled:bg-emerald-800 text-white font-semibold text-sm rounded-xl shadow-lg shadow-emerald-500/10 active:scale-95 transition-all flex items-center justify-center cursor-pointer"
                   >
                     {isProcessing ? (
-                      <div className="w-5 h-5 rounded-full border border-t-white border-indigo-300 animate-spin" />
+                      <div className="w-5 h-5 rounded-full border border-t-white border-emerald-300 animate-spin" />
                     ) : momoSubTab === "prompt" ? (
                       "Send Prompt"
                     ) : (
@@ -384,14 +384,14 @@ export default function PaymentModal({
             ) : momoStep === "waiting" ? (
               <div className="flex flex-col items-center justify-center py-6 text-center space-y-4">
                 <div className="relative w-12 h-12">
-                  <div className="absolute inset-0 rounded-full border-4 border-zinc-800" />
+                  <div className="absolute inset-0 rounded-full border-4 border-zinc-900" />
                   <div className={`absolute inset-0 rounded-full border-4 animate-spin ${
-                    momoSubTab === "prompt" ? "border-t-indigo-500" : "border-t-amber-500"
+                    momoSubTab === "prompt" ? "border-t-emerald-500" : "border-t-amber-500"
                   }`} />
                 </div>
                 {momoSubTab === "prompt" ? (
                   <div className="space-y-1">
-                    <p className="text-sm font-bold text-indigo-400 uppercase tracking-wide animate-pulse">Waiting for PIN entry...</p>
+                    <p className="text-sm font-bold text-emerald-400 uppercase tracking-wide animate-pulse">Waiting for PIN entry...</p>
                     <p className="text-[11px] text-zinc-400 max-w-[320px] leading-relaxed">
                       We sent a MoMo prompt request to <strong className="text-zinc-200">{phoneNumber}</strong>.
                     </p>
@@ -411,7 +411,7 @@ export default function PaymentModal({
                   </div>
                 )}
               </div>
-
+ 
             ) : (
               <div className="flex flex-col items-center justify-center py-8 text-center space-y-3">
                 <div className="w-12 h-12 rounded-full bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-xl font-bold shadow-lg shadow-emerald-500/10 animate-bounce">
@@ -440,10 +440,10 @@ export default function PaymentModal({
                     const formatted = val.match(/.{1,4}/g)?.join(" ") || val;
                     setCardNumber(formatted);
                   }}
-                  className="w-full px-4 py-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-sm focus:outline-none focus:border-indigo-500 transition-all font-mono"
+                  className="w-full px-4 py-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-sm focus:outline-none focus:border-emerald-500 transition-all font-mono"
                 />
               </div>
-
+ 
               {/* Expiry & CVV */}
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1.5">
@@ -462,7 +462,7 @@ export default function PaymentModal({
                         setCardExpiry(val);
                       }
                     }}
-                    className="w-full px-4 py-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-sm focus:outline-none focus:border-indigo-500 transition-all"
+                    className="w-full px-4 py-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-sm focus:outline-none focus:border-emerald-500 transition-all"
                   />
                 </div>
                 <div className="space-y-1.5">
@@ -474,11 +474,11 @@ export default function PaymentModal({
                     maxLength={3}
                     value={cardCvv}
                     onChange={(e) => setCardCvv(e.target.value.replace(/\D/g, ""))}
-                    className="w-full px-4 py-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-sm focus:outline-none focus:border-indigo-500 transition-all"
+                    className="w-full px-4 py-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-sm focus:outline-none focus:border-emerald-500 transition-all"
                   />
                 </div>
               </div>
-
+ 
               {/* Name */}
               <div className="space-y-1.5">
                 <label className="text-xs font-medium text-zinc-400">Cardholder Name</label>
@@ -488,26 +488,26 @@ export default function PaymentModal({
                   placeholder="Jean Damascene"
                   value={cardName}
                   onChange={(e) => setCardName(e.target.value)}
-                  className="w-full px-4 py-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-sm focus:outline-none focus:border-indigo-500 transition-all"
+                  className="w-full px-4 py-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-sm focus:outline-none focus:border-emerald-500 transition-all"
                 />
               </div>
-
+ 
               <div className="pt-2 flex gap-3">
                 <button
                   type="button"
                   onClick={onClose}
                   disabled={isProcessing}
-                  className="flex-1 py-2.5 bg-zinc-900 hover:bg-zinc-850 border border-zinc-800 text-zinc-300 font-semibold text-sm rounded-xl transition-all"
+                  className="flex-1 py-2.5 bg-zinc-900 hover:bg-zinc-850 border border-zinc-800 text-zinc-300 font-semibold text-sm rounded-xl transition-all cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isProcessing}
-                  className="flex-1 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-sm rounded-xl shadow-lg shadow-indigo-500/10 active:scale-95 transition-all flex items-center justify-center"
+                  className="flex-1 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-sm rounded-xl shadow-lg shadow-emerald-500/10 active:scale-95 transition-all flex items-center justify-center cursor-pointer"
                 >
                   {isProcessing ? (
-                    <div className="w-5 h-5 rounded-full border border-t-white border-indigo-300 animate-spin" />
+                    <div className="w-5 h-5 rounded-full border border-t-white border-emerald-300 animate-spin" />
                   ) : (
                     `Pay ${amount.toLocaleString()} RWF`
                   )}

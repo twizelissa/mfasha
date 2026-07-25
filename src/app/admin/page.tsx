@@ -99,7 +99,7 @@ export default function AdminPage() {
           <div className="pt-2">
             <Link
               href="/"
-              className="inline-block w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-sm py-2.5 rounded-xl transition-all active:scale-95"
+              className="inline-block w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-sm py-2.5 rounded-xl transition-all active:scale-95 cursor-pointer"
             >
               Return Home
             </Link>
@@ -116,12 +116,12 @@ export default function AdminPage() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-zinc-900 pb-6">
           <div>
-            <h1 className="text-2xl font-extrabold text-white tracking-tight">FormFlo Admin</h1>
+            <h1 className="text-2xl font-extrabold text-white tracking-tight">Mfasha Admin</h1>
             <p className="text-xs text-zinc-500 mt-1">Review, approve, and reject manual Mobile Money payments</p>
           </div>
           <Link
             href="/"
-            className="self-start sm:self-auto bg-zinc-900 hover:bg-zinc-850 border border-zinc-800 text-zinc-300 text-xs font-semibold px-4 py-2.5 rounded-lg transition-all active:scale-95"
+            className="self-start sm:self-auto bg-zinc-900 hover:bg-zinc-850 border border-zinc-800 text-zinc-300 text-xs font-semibold px-4 py-2.5 rounded-lg transition-all active:scale-95 cursor-pointer"
           >
             ← Back to App
           </Link>
@@ -154,9 +154,9 @@ export default function AdminPage() {
           <div className="bg-zinc-900/40 border border-zinc-850 p-5 rounded-2xl flex items-center justify-between">
             <div>
               <span className="text-xs text-zinc-500 font-semibold block uppercase tracking-wider">Total Orders</span>
-              <span className="text-3xl font-extrabold text-indigo-400 mt-2 block">{payments.length}</span>
+              <span className="text-3xl font-extrabold text-emerald-400 mt-2 block">{payments.length}</span>
             </div>
-            <div className="w-10 h-10 rounded-xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center text-lg">
+            <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-lg">
               📦
             </div>
           </div>
@@ -169,9 +169,9 @@ export default function AdminPage() {
               <button
                 key={t}
                 onClick={() => setFilter(t)}
-                className={`px-4 py-1.5 rounded-lg text-xs font-semibold uppercase tracking-wider border transition-all ${
+                className={`px-4 py-1.5 rounded-lg text-xs font-semibold uppercase tracking-wider border transition-all cursor-pointer ${
                   filter === t
-                    ? "bg-indigo-600 border-indigo-600 text-white"
+                    ? "bg-emerald-600 border-emerald-600 text-white"
                     : "bg-zinc-900 border-zinc-850 text-zinc-400 hover:text-zinc-300"
                 }`}
               >
@@ -181,7 +181,7 @@ export default function AdminPage() {
           </div>
           <button
             onClick={fetchPayments}
-            className="text-xs text-zinc-500 hover:text-zinc-400 transition-colors flex items-center gap-1.5"
+            className="text-xs text-zinc-500 hover:text-zinc-400 transition-colors flex items-center gap-1.5 cursor-pointer"
           >
             🔄 Refresh List
           </button>
@@ -225,7 +225,7 @@ export default function AdminPage() {
                       <td className="px-6 py-4 font-bold text-white whitespace-nowrap">
                         {item.payerName}
                       </td>
-                      <td className="px-6 py-4 font-mono font-bold text-indigo-400 whitespace-nowrap">
+                      <td className="px-6 py-4 font-mono font-bold text-emerald-400 whitespace-nowrap">
                         {item.id}
                       </td>
                       <td className="px-6 py-4 max-w-[200px] truncate">
@@ -261,14 +261,14 @@ export default function AdminPage() {
                             <button
                               onClick={() => handleUpdateStatus(item.id, "approved")}
                               disabled={actioningId !== null}
-                              className="bg-emerald-600 hover:bg-emerald-500 disabled:bg-emerald-800 text-white font-bold px-3 py-1.5 rounded-md transition-all active:scale-95"
+                              className="bg-emerald-600 hover:bg-emerald-500 disabled:bg-emerald-800 text-white font-bold px-3 py-1.5 rounded-md transition-all active:scale-95 cursor-pointer"
                             >
                               Approve
                             </button>
                             <button
                               onClick={() => handleUpdateStatus(item.id, "rejected")}
                               disabled={actioningId !== null}
-                              className="bg-rose-600/10 hover:bg-rose-600/25 border border-rose-500/15 text-rose-400 font-bold px-3 py-1.5 rounded-md transition-all active:scale-95"
+                              className="bg-rose-600/10 hover:bg-rose-600/25 border border-rose-500/15 text-rose-400 font-bold px-3 py-1.5 rounded-md transition-all active:scale-95 cursor-pointer"
                             >
                               Reject
                             </button>
@@ -278,6 +278,7 @@ export default function AdminPage() {
                         )}
                       </td>
                     </tr>
+
                   ))}
                 </tbody>
               </table>

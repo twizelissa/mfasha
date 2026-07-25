@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "FormFlo - Automate Google Form Responses",
+  title: "Mfasha - Automate Google Form Responses",
   description: "Generate realistic, randomized survey responses for Google Forms in seconds.",
 };
 
@@ -37,9 +37,9 @@ export default function RootLayout({
           <main className="flex-1 w-full max-w-7xl mx-auto px-6 py-8">
             {children}
           </main>
-          <footer className="border-t border-zinc-800/50 py-6 text-center text-xs text-zinc-500">
+          <footer className="border-t border-zinc-900 py-6 text-center text-xs text-zinc-500">
             <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 px-6">
-              <span>&copy; {new Date().getFullYear()} FormFlo. All rights reserved.</span>
+              <span>&copy; {new Date().getFullYear()} Mfasha. All rights reserved.</span>
               <div className="flex gap-4">
                 <a href="#" className="hover:text-zinc-300">Privacy Policy</a>
                 <a href="#" className="hover:text-zinc-300">Terms of Service</a>

@@ -10,7 +10,7 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: "Missing email parameter" }, { status: 400 });
     }
 
-    const user = getOrCreateUser(email);
+    const user = await getOrCreateUser(email);
     return NextResponse.json({ user });
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 });

@@ -14,7 +14,7 @@ export async function POST(req: Request) {
 
     // Server-side billing and payment verification
     if (email) {
-      const serverUser = getOrCreateUser(email);
+      const serverUser = await getOrCreateUser(email);
       const remainingFree = Math.max(0, serverUser.quotaLimit - serverUser.quotaUsed);
       const premiumNeeded = count - remainingFree;
 
@@ -28,7 +28,7 @@ export async function POST(req: Request) {
 
         const isMockCard = transactionId.startsWith("CARD_MOCK_");
         if (!isMockCard) {
-          const payments = getPayments();
+          const payments = await getPayments();
           const tx = payments.find((p) => p.id === transactionId);
 
           if (!tx) {
@@ -48,14 +48,14 @@ export async function POST(req: Request) {
           }
 
           // Successfully verified manual MoMo payment, mark as redeemed
-          redeemPayment(transactionId);
+          await redeemPayment(transactionId);
         }
 
         // Deduct/increment user quota
-        incrementUserQuota(email, count);
+        await incrementUserQuota(email, count);
       } else {
         // Within free quota, increment quota used
-        incrementUserQuota(email, count);
+        await incrementUserQuota(email, count);
       }
     }
 

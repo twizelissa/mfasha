@@ -10,15 +10,25 @@ export default function Navbar() {
   const { user, loginWithGoogle, logout, isLoading } = useAuth();
 
   return (
-    <nav className="sticky top-0 z-50 glass border-b border-zinc-800/50 backdrop-blur-md px-6 py-4">
+    <nav className="sticky top-0 z-50 glass border-b border-zinc-900/60 backdrop-blur-md px-6 py-4">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2.5 group">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-indigo-500 to-violet-500 flex items-center justify-center font-bold text-white shadow-lg shadow-indigo-500/20 group-hover:scale-105 transition-transform">
-            FF
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-600 flex items-center justify-center font-bold text-white shadow-lg shadow-emerald-500/20 group-hover:scale-105 transition-transform">
+            <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              {/* Bottom Hand (Helper) */}
+              <path d="M3 20c1.5-2 3-4 4.5-5.5" />
+              <path d="M7.5 14.5c.8-1 2-1.5 3-1" />
+              <path d="M9.5 12.5c1.2-1.2 3-.8 4.2.4l1.8 1.8" />
+              
+              {/* Top Hand (Being Lifted) */}
+              <path d="M21 4c-1.5 2-3 4-4.5 5.5" />
+              <path d="M16.5 9.5c-.8 1-2 1.5-3 1" />
+              <path d="M14.5 11.5c-1.2 1.2-3 .8-4.2-.4l-1.8-1.8" />
+            </svg>
           </div>
-          <span className="font-semibold text-lg tracking-tight text-white group-hover:text-indigo-400 transition-colors">
-            FormFlo
+          <span className="font-semibold text-lg tracking-tight text-white group-hover:text-emerald-400 transition-colors">
+            Mfasha
           </span>
         </Link>
 
@@ -27,7 +37,7 @@ export default function Navbar() {
           <Link
             href="/"
             className={`text-sm font-medium transition-colors ${
-              pathname === "/" ? "text-indigo-400" : "text-zinc-400 hover:text-white"
+              pathname === "/" ? "text-emerald-400" : "text-zinc-400 hover:text-white"
             }`}
           >
             Home
@@ -35,7 +45,7 @@ export default function Navbar() {
           <Link
             href="/dashboard"
             className={`text-sm font-medium transition-colors ${
-              pathname === "/dashboard" ? "text-indigo-400" : "text-zinc-400 hover:text-white"
+              pathname === "/dashboard" ? "text-emerald-400" : "text-zinc-400 hover:text-white"
             }`}
           >
             Dashboard
@@ -44,7 +54,7 @@ export default function Navbar() {
             <Link
               href="/admin"
               className={`text-sm font-medium transition-colors ${
-                pathname === "/admin" ? "text-indigo-400" : "text-zinc-400 hover:text-white"
+                pathname === "/admin" ? "text-emerald-400" : "text-zinc-400 hover:text-white"
               }`}
             >
               Admin Panel
@@ -55,27 +65,27 @@ export default function Navbar() {
         {/* User Info / CTA */}
         <div className="flex items-center gap-4">
           {isLoading ? (
-            <div className="w-8 h-8 rounded-full border border-t-indigo-500 border-zinc-800 animate-spin" />
+            <div className="w-8 h-8 rounded-full border border-t-emerald-500 border-zinc-800 animate-spin" />
           ) : user ? (
             <div className="flex items-center gap-3">
               {/* Quota indicator */}
               <div className="hidden sm:flex flex-col items-end text-xs">
                 <span className="text-zinc-400">Free Quota</span>
-                <span className="font-semibold text-indigo-400">
+                <span className="font-semibold text-emerald-400">
                   {Math.max(0, user.quotaLimit - user.quotaUsed)} / {user.quotaLimit} left
                 </span>
               </div>
               
               {/* User Avatar & Dropdown */}
-              <div className="flex items-center gap-2 pl-2 border-l border-zinc-800">
+              <div className="flex items-center gap-2 pl-2 border-l border-zinc-850">
                 <img
                   src={user.image}
                   alt={user.name}
-                  className="w-8 h-8 rounded-full border border-zinc-700"
+                  className="w-8 h-8 rounded-full border border-zinc-800"
                 />
                 <button
                   onClick={logout}
-                  className="text-xs bg-zinc-900 hover:bg-zinc-800 text-zinc-300 hover:text-white px-3 py-1.5 rounded-md border border-zinc-800 transition-all"
+                  className="text-xs bg-zinc-900/60 hover:bg-zinc-800 text-zinc-300 hover:text-white px-3 py-1.5 rounded-md border border-zinc-850 transition-all"
                 >
                   Sign Out
                 </button>
@@ -84,7 +94,7 @@ export default function Navbar() {
           ) : (
             <button
               onClick={loginWithGoogle}
-              className="flex items-center gap-2 bg-white hover:bg-zinc-100 text-zinc-900 text-sm font-semibold px-4 py-2 rounded-lg transition-all shadow-md active:scale-95"
+              className="flex items-center gap-2 bg-white hover:bg-zinc-100 text-zinc-900 text-sm font-semibold px-4 py-2 rounded-lg transition-all shadow-md active:scale-95 cursor-pointer"
             >
               {/* Google logo svg */}
               <svg className="w-4 h-4" viewBox="0 0 24 24" width="24" height="24">

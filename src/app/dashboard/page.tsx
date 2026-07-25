@@ -53,7 +53,7 @@ export default function DashboardPage() {
   const [history, setHistory] = useState<HistoryItem[]>([]);
 
   useEffect(() => {
-    const savedHistory = localStorage.getItem("formflo_history");
+    const savedHistory = localStorage.getItem("mfasha_history") || localStorage.getItem("formflo_history");
     if (savedHistory) {
       try {
         const parsed = JSON.parse(savedHistory);
@@ -67,10 +67,11 @@ export default function DashboardPage() {
     }
     // Fallback/Default mock history if empty
     setHistory(MOCK_HISTORY);
-    localStorage.setItem("formflo_history", JSON.stringify(MOCK_HISTORY));
+    localStorage.setItem("mfasha_history", JSON.stringify(MOCK_HISTORY));
   }, []);
 
   const handleClearHistory = () => {
+    localStorage.removeItem("mfasha_history");
     localStorage.removeItem("formflo_history");
     setHistory([]);
   };
@@ -94,7 +95,7 @@ export default function DashboardPage() {
         </div>
         <button
           onClick={loginWithGoogle}
-          className="flex items-center gap-2 bg-white hover:bg-zinc-100 text-zinc-900 text-sm font-semibold px-5 py-2.5 rounded-lg transition-all shadow-md active:scale-95"
+          className="flex items-center gap-2 bg-white hover:bg-zinc-100 text-zinc-900 text-sm font-semibold px-5 py-2.5 rounded-lg transition-all shadow-md active:scale-95 cursor-pointer"
         >
           Login with Google
         </button>
@@ -111,7 +112,7 @@ export default function DashboardPage() {
           <img
             src={user.image}
             alt={user.name}
-            className="w-12 h-12 rounded-full border border-zinc-700 shadow-lg"
+            className="w-12 h-12 rounded-full border border-zinc-800 shadow-lg"
           />
           <div>
             <h2 className="text-xl font-bold text-white">Welcome back, {user.name}</h2>
@@ -121,13 +122,13 @@ export default function DashboardPage() {
         <div className="flex items-center gap-3">
           <Link
             href="/"
-            className="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold px-4 py-2.5 rounded-lg shadow-lg shadow-indigo-500/10 transition-all active:scale-95"
+            className="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold px-4 py-2.5 rounded-lg shadow-lg shadow-emerald-500/10 transition-all active:scale-95 cursor-pointer"
           >
             + Create New Run
           </Link>
           <button
             onClick={handleClearHistory}
-            className="bg-zinc-900 hover:bg-zinc-850 text-zinc-400 hover:text-zinc-300 text-xs font-semibold px-4 py-2.5 rounded-lg border border-zinc-850 transition-all"
+            className="bg-zinc-900 hover:bg-zinc-850 text-zinc-400 hover:text-zinc-300 text-xs font-semibold px-4 py-2.5 rounded-lg border border-zinc-850 transition-all cursor-pointer"
           >
             Clear logs
           </button>
@@ -136,43 +137,51 @@ export default function DashboardPage() {
 
       {/* Metrics Row */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-        <div className="bg-zinc-950 border border-zinc-800/80 p-5 rounded-2xl shadow-xl flex items-center justify-between">
+        <div className="bg-zinc-950 border border-zinc-900/80 p-5 rounded-2xl shadow-xl flex items-center justify-between">
           <div>
             <span className="text-xs text-zinc-500 font-semibold block uppercase tracking-wider">Forms Processed</span>
             <span className="text-3xl font-extrabold text-white mt-2 block">{history.length}</span>
           </div>
-          <div className="w-10 h-10 rounded-xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center text-lg font-bold">
-            📄
+          <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center font-bold">
+            <svg className="w-5 h-5 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+              <polyline points="14 2 14 8 20 8" />
+            </svg>
           </div>
         </div>
 
-        <div className="bg-zinc-950 border border-zinc-800/80 p-5 rounded-2xl shadow-xl flex items-center justify-between">
+        <div className="bg-zinc-950 border border-zinc-900/80 p-5 rounded-2xl shadow-xl flex items-center justify-between">
           <div>
             <span className="text-xs text-zinc-500 font-semibold block uppercase tracking-wider">Total Submissions</span>
             <span className="text-3xl font-extrabold text-emerald-400 mt-2 block">
               {totalSubmissions}
             </span>
           </div>
-          <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-lg font-bold">
-            ⚡
+          <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center font-bold">
+            <svg className="w-5 h-5 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+            </svg>
           </div>
         </div>
 
-        <div className="bg-zinc-950 border border-zinc-800/80 p-5 rounded-2xl shadow-xl flex items-center justify-between">
+        <div className="bg-zinc-950 border border-zinc-900/80 p-5 rounded-2xl shadow-xl flex items-center justify-between">
           <div>
             <span className="text-xs text-zinc-500 font-semibold block uppercase tracking-wider">Premium Spendings</span>
-            <span className="text-3xl font-extrabold text-indigo-400 mt-2 block">
+            <span className="text-3xl font-extrabold text-emerald-400 mt-2 block">
               {totalCost.toLocaleString()} RWF
             </span>
           </div>
-          <div className="w-10 h-10 rounded-xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center text-lg font-bold">
-            💳
+          <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center font-bold">
+            <svg className="w-5 h-5 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="2" y="5" width="20" height="14" rx="2" />
+              <line x1="2" y1="10" x2="22" y2="10" />
+            </svg>
           </div>
         </div>
       </div>
 
       {/* History Log Table */}
-      <div className="bg-zinc-950 border border-zinc-800 rounded-2xl overflow-hidden shadow-xl">
+      <div className="bg-zinc-950 border border-zinc-900 rounded-2xl overflow-hidden shadow-xl">
         <div className="px-6 py-4 border-b border-zinc-900">
           <h3 className="font-semibold text-white">Execution Logs</h3>
           <p className="text-xs text-zinc-500 mt-0.5">Historical overview of form response submissions</p>
@@ -210,7 +219,7 @@ export default function DashboardPage() {
                         {Math.round((item.success / item.total) * 100)}%
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-right font-bold text-indigo-400">
+                    <td className="px-6 py-4 text-right font-bold text-emerald-400">
                       {item.cost === 0 ? "Free" : `${item.cost.toLocaleString()} RWF`}
                     </td>
                     <td className="px-6 py-4 text-right whitespace-nowrap">
