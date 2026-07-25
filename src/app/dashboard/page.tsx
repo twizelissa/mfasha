@@ -51,6 +51,41 @@ const MOCK_HISTORY: HistoryItem[] = [
 export default function DashboardPage() {
   const { user, loginWithGoogle } = useAuth();
   const [history, setHistory] = useState<HistoryItem[]>([]);
+  const [pendingTxId, setPendingTxId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const activePendingId = localStorage.getItem("mfasha_pending_tx_id");
+    if (activePendingId) {
+      setPendingTxId(activePendingId);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!pendingTxId) return;
+
+    const intervalId = setInterval(async () => {
+      try {
+        const res = await fetch(`/api/payments/status?id=${encodeURIComponent(pendingTxId)}`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data.status === "approved") {
+            clearInterval(intervalId);
+            localStorage.removeItem("mfasha_pending_tx_id");
+            setPendingTxId(null);
+            window.location.reload();
+          } else if (data.status === "rejected") {
+            clearInterval(intervalId);
+            localStorage.removeItem("mfasha_pending_tx_id");
+            setPendingTxId(null);
+          }
+        }
+      } catch (e) {
+        console.error("Error checking pending payment on dashboard:", e);
+      }
+    }, 5000);
+
+    return () => clearInterval(intervalId);
+  }, [pendingTxId]);
 
   useEffect(() => {
     const savedHistory = localStorage.getItem("mfasha_history") || localStorage.getItem("formflo_history");
@@ -134,6 +169,25 @@ export default function DashboardPage() {
           </button>
         </div>
       </div>
+
+      {/* Pending Transaction Alert Banner */}
+      {pendingTxId && (
+        <div className="bg-amber-950/20 border border-amber-500/15 text-amber-200 p-4 rounded-2xl flex items-center justify-between shadow-xl">
+          <div className="flex items-center gap-3">
+            <span className="text-lg animate-pulse">⏳</span>
+            <div className="text-left">
+              <h4 className="text-xs font-bold text-white uppercase tracking-wider">Payment Verification Pending</h4>
+              <p className="text-[11px] text-zinc-400 mt-0.5">
+                We are waiting for your Mobile Money transaction (Ref: <strong className="font-mono text-amber-400">{pendingTxId}</strong>) to be approved.
+                Once confirmed, your quota will be updated automatically.
+              </p>
+            </div>
+          </div>
+          <div className="text-xs font-semibold px-2.5 py-1 rounded bg-amber-500/10 border border-amber-500/25 uppercase tracking-widest text-[9px] animate-pulse">
+            Waiting Approval
+          </div>
+        </div>
+      )}
 
       {/* Metrics Row */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">

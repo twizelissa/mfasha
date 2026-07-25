@@ -57,7 +57,19 @@ export default function PaymentModal({
   }, []);
 
   useEffect(() => {
+    if (isOpen) {
+      const pendingId = localStorage.getItem("mfasha_pending_tx_id");
+      if (pendingId) {
+        setTransactionId(pendingId);
+        setMomoStep("waiting");
+      }
+    }
+  }, [isOpen]);
+
+  useEffect(() => {
     if (momoStep !== "waiting" || !transactionId) return;
+
+    localStorage.setItem("mfasha_pending_tx_id", transactionId);
 
     const intervalId = setInterval(async () => {
       try {
@@ -68,6 +80,7 @@ export default function PaymentModal({
             clearInterval(intervalId);
             setIsProcessing(false);
             setMomoStep("success");
+            localStorage.removeItem("mfasha_pending_tx_id");
             
             // Show success for 1.5 seconds, then complete
             await new Promise((resolve) => setTimeout(resolve, 1500));
@@ -76,6 +89,7 @@ export default function PaymentModal({
             clearInterval(intervalId);
             setIsProcessing(false);
             setMomoStep("input");
+            localStorage.removeItem("mfasha_pending_tx_id");
             setMomoError(
               momoSubTab === "prompt"
                 ? "Transaction was failed or cancelled. Please try again."
@@ -176,9 +190,19 @@ export default function PaymentModal({
               Pay for {responseCount} responses ({responseCount - 20} premium)
             </p>
           </div>
-          <div className="text-right">
-            <span className="text-xs text-zinc-400 block font-medium">Total Price</span>
-            <span className="font-bold text-lg text-emerald-400">{amount.toLocaleString()} RWF</span>
+          <div className="flex items-center gap-4">
+            <div className="text-right">
+              <span className="text-xs text-zinc-400 block font-medium">Total Price</span>
+              <span className="font-bold text-lg text-emerald-400">{amount.toLocaleString()} RWF</span>
+            </div>
+            <button
+              onClick={onClose}
+              className="text-zinc-500 hover:text-zinc-300 transition-colors cursor-pointer p-1 rounded-lg hover:bg-zinc-900"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
           </div>
         </div>
  

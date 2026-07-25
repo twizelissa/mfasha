@@ -17,21 +17,47 @@ export async function getUsers(): Promise<ServerUser[]> {
   }
 }
 
-export async function getOrCreateUser(email: string): Promise<ServerUser> {
+export async function getOrCreateUser(email: string, deviceId?: string): Promise<ServerUser> {
   await initDb();
   const lowercaseEmail = email.toLowerCase();
   try {
     const res = await pool.query(
-      'SELECT email, quota_used AS "quotaUsed", quota_limit AS "quotaLimit" FROM users WHERE LOWER(email) = $1',
+      'SELECT email, quota_used AS "quotaUsed", quota_limit AS "quotaLimit", device_id AS "deviceId" FROM users WHERE LOWER(email) = $1',
       [lowercaseEmail]
     );
 
     if (res.rows.length > 0) {
-      return res.rows[0] as ServerUser;
+      const user = res.rows[0];
+      // If user exists but device_id is not recorded yet, update it
+      if (!user.deviceId && deviceId) {
+        await pool.query(
+          'UPDATE users SET device_id = $1 WHERE LOWER(email) = $2',
+          [deviceId, lowercaseEmail]
+        );
+      }
+      return {
+        email: user.email,
+        quotaUsed: user.quotaUsed,
+        quotaLimit: user.quotaLimit,
+      };
     } else {
+      // Check if deviceId has already been used by another user
+      let quotaLimit = 20;
+      if (deviceId) {
+        const deviceRes = await pool.query(
+          'SELECT email FROM users WHERE device_id = $1 AND LOWER(email) != $2 LIMIT 1',
+          [deviceId, lowercaseEmail]
+        );
+        if (deviceRes.rows.length > 0) {
+          // Device has already been used to claim the free trial!
+          quotaLimit = 0;
+          console.warn(`Device fingerprint ${deviceId} already used by ${deviceRes.rows[0].email}. Setting quota_limit for ${lowercaseEmail} to 0.`);
+        }
+      }
+
       const insertRes = await pool.query(
-        'INSERT INTO users (email, quota_used, quota_limit) VALUES ($1, $2, $3) RETURNING email, quota_used AS "quotaUsed", quota_limit AS "quotaLimit"',
-        [lowercaseEmail, 0, 20]
+        'INSERT INTO users (email, quota_used, quota_limit, device_id) VALUES ($1, $2, $3, $4) RETURNING email, quota_used AS "quotaUsed", quota_limit AS "quotaLimit"',
+        [lowercaseEmail, 0, quotaLimit, deviceId || null]
       );
       return insertRes.rows[0] as ServerUser;
     }

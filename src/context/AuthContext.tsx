@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { auth, isFirebaseConfigured } from "@/utils/firebase";
+import { getDeviceFingerprint } from "@/utils/fingerprint";
 import {
   signInWithPopup,
   GoogleAuthProvider,
@@ -52,7 +53,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const syncQuota = async (email: string, baseUser: Omit<User, "quotaUsed" | "quotaLimit">) => {
     try {
-      const res = await fetch(`/api/user/profile?email=${encodeURIComponent(email)}`);
+      const deviceId = getDeviceFingerprint();
+      const res = await fetch(`/api/user/profile?email=${encodeURIComponent(email)}&deviceId=${encodeURIComponent(deviceId)}`);
       if (res.ok) {
         const data = await res.json();
         if (data.user) {

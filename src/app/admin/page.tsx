@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
+import { auth } from "@/utils/firebase";
 
 interface Payment {
   id: string;
@@ -24,7 +25,13 @@ export default function AdminPage() {
 
   const fetchPayments = async () => {
     try {
-      const res = await fetch("/api/payments/list");
+      const token = await auth?.currentUser?.getIdToken();
+      if (!token) return;
+      const res = await fetch("/api/payments/list", {
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      });
       if (!res.ok) throw new Error("Failed to load transactions.");
       const data = await res.json();
       setPayments(data.payments || []);
@@ -36,18 +43,25 @@ export default function AdminPage() {
   };
 
   useEffect(() => {
-    fetchPayments();
-    // Poll every 5 seconds so the admin sees updates in real-time
-    const intervalId = setInterval(fetchPayments, 5000);
-    return () => clearInterval(intervalId);
-  }, []);
+    if (user && user.email === "twizelissa@gmail.com") {
+      fetchPayments();
+      // Poll every 5 seconds so the admin sees updates in real-time
+      const intervalId = setInterval(fetchPayments, 5000);
+      return () => clearInterval(intervalId);
+    }
+  }, [user]);
 
   const handleUpdateStatus = async (id: string, status: "approved" | "rejected") => {
     setActioningId(id);
     try {
+      const token = await auth?.currentUser?.getIdToken();
+      if (!token) throw new Error("Not authenticated");
       const res = await fetch("/api/payments/list", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
         body: JSON.stringify({ id, status })
       });
 

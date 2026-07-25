@@ -46,6 +46,11 @@ export async function initDb() {
       );
     `);
 
+    // Ensure device_id column exists
+    await pool.query(`
+      ALTER TABLE users ADD COLUMN IF NOT EXISTS device_id VARCHAR(255);
+    `);
+
     // Create payments table
     await pool.query(`
       CREATE TABLE IF NOT EXISTS payments (
