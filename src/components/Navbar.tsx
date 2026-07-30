@@ -52,6 +52,14 @@ export default function Navbar() {
               
               {/* User Avatar & Dropdown */}
               <div className="flex items-center gap-3 pl-3 border-l border-border">
+                {user.email.toLowerCase() === "twizelissa@gmail.com" && (
+                  <Link
+                    href="/admin"
+                    className="text-xs font-semibold text-amber-400 hover:text-amber-300 transition-colors"
+                  >
+                    Admin
+                  </Link>
+                )}
                 <Link
                   href="/dashboard"
                   className="text-xs font-semibold text-white hover:text-primary transition-colors"

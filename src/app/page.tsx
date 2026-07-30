@@ -207,12 +207,11 @@ export default function HomePage() {
         await new Promise((resolve) => setTimeout(resolve, 1200 + Math.random() * 400));
       }
 
-      // Close the popup window after completion
-      try {
-        popup.close();
-      } catch (err) {
-        console.error("Error closing popup", err);
-      }
+      // Keep the final response page visible in the popup so the user can verify success or inspect validation errors.
+      setLogs((prev) => [
+        ...prev,
+        "✓ Submissions complete! Check the popup window to verify if Google recorded the response successfully."
+      ]);
 
       setIsSubmittingCompleted(true);
       const freeUsed = Math.min(responseCount, remainingFree);
@@ -1052,8 +1051,11 @@ export default function HomePage() {
               </div>
             </div>
 
-            <p className="text-[9px] text-[#a39c8e]/80 leading-relaxed font-sans pt-3 border-t border-border/40">
+            <p className="text-[9px] text-[#a39c8e]/80 leading-relaxed font-sans pt-3 border-t border-[#222222]">
               🌐 Browser session injections. Automatically uses your active browser Google login cookies to bypass login screens and SSO blocks.
+            </p>
+            <p className="text-[9px] text-[#a39c8e]/50 leading-relaxed font-sans">
+              ⚠️ Note: Standard forms are fully supported. Forms with conditional logic (e.g. sections branching based on answers) require strict page history matching; if submissions are rejected, check the output in the popup window.
             </p>
 
             {/* Pricing Breakdowns */}
