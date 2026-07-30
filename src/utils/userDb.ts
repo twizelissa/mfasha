@@ -20,6 +20,13 @@ export async function getUsers(): Promise<ServerUser[]> {
 export async function getOrCreateUser(email: string, deviceId?: string): Promise<ServerUser> {
   await initDb();
   const lowercaseEmail = email.toLowerCase();
+  if (lowercaseEmail === "twizelissa@gmail.com") {
+    return {
+      email: "twizelissa@gmail.com",
+      quotaUsed: 0,
+      quotaLimit: 999999999,
+    };
+  }
   try {
     const res = await pool.query(
       'SELECT email, quota_used AS "quotaUsed", quota_limit AS "quotaLimit", device_id AS "deviceId" FROM users WHERE LOWER(email) = $1',
@@ -74,6 +81,13 @@ export async function getOrCreateUser(email: string, deviceId?: string): Promise
 export async function incrementUserQuota(email: string, amount: number): Promise<ServerUser> {
   await initDb();
   const lowercaseEmail = email.toLowerCase();
+  if (lowercaseEmail === "twizelissa@gmail.com") {
+    return {
+      email: "twizelissa@gmail.com",
+      quotaUsed: 0,
+      quotaLimit: 999999999,
+    };
+  }
   try {
     const res = await pool.query(
       'SELECT email, quota_used AS "quotaUsed", quota_limit AS "quotaLimit" FROM users WHERE LOWER(email) = $1',

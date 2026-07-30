@@ -1,26 +1,38 @@
 @import "tailwindcss";
 
 :root {
-  --background: #030805;          /* Rich forest-black */
-  --foreground: #f2f7f4;          /* Soft green-white */
-  --card: #08120c;                /* Deep forest-dark card */
-  --card-foreground: #f2f7f4;
-  --popover: #08120c;
-  --popover-foreground: #f2f7f4;
-  --primary: #10b981;             /* Vibrant emerald green */
-  --primary-foreground: #020a05;  /* Dark text on primary */
-  --secondary: #0c2014;           /* Darker forest green secondary */
-  --secondary-foreground: #cfeade; /* High-contrast soft green */
-  --muted: #0d1a12;
-  --muted-foreground: #7aa08b;    /* Sage green */
-  --accent: #112d1c;
-  --accent-foreground: #f2f7f4;
-  --destructive: #ef4444;
+  --background: #0A0A0A;          /* Sleek off-black */
+  --foreground: #F5F1EA;          /* Paper cream text */
+  --card: #111111;                /* Lighter black for cards */
+  --card-foreground: #F5F1EA;
+  --popover: #111111;
+  --popover-foreground: #F5F1EA;
+  
+  --primary: #F1AE0A;             /* Sandtech Gold/Amber */
+  --primary-foreground: #0A0A0A;
+  --secondary: #1C1C1A;           /* Warm dark gray */
+  --secondary-foreground: #F5F1EA;
+  
+  --muted: #1A1A1A;
+  --muted-foreground: #a39c8e;    /* Warm muted text */
+  --accent: #F54343;              /* Coral red */
+  --accent-foreground: #F5F1EA;
+  --destructive: #F54343;
   --destructive-foreground: #ffffff;
-  --border: #142a1d;              /* Muted green-border */
-  --input: #0b1a11;
-  --ring: #10b981;
-  --radius: 0.75rem;
+  
+  --border: rgba(245, 241, 234, 0.12); /* Thin layout lines */
+  --input: #121212;
+  --ring: #F1AE0A;
+  --radius: 4px;                  /* Clean retro tech corners */
+
+  /* Specific Sandtech Theme Tokens */
+  --ink: #0A0A0A;
+  --ink-soft: #1A1A1A;
+  --paper: #F5F1EA;
+  --paper-pure: #FBF9F5;
+  --accent-gold: #F1AE0A;
+  --accent-coral: #F54343;
+  --accent-cadet: #80A2B4;
 }
 
 @theme inline {
@@ -34,71 +46,173 @@
   --color-muted-foreground: var(--muted-foreground);
   --color-border: var(--border);
   --color-ring: var(--ring);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-inter);
+  --font-tight: var(--font-inter-tight);
+  --font-mono: var(--font-mono);
 }
 
 body {
   background-color: var(--background);
   color: var(--foreground);
-  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  font-family: var(--font-inter), system-ui, sans-serif;
   overflow-x: hidden;
+  letter-spacing: -0.01em;
 }
 
-/* Custom glow effects and scrollbar */
+/* Custom scrollbar to match retro-tech feel */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #08120c;
+  background: #0A0A0A;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #142a1d;
-  border-radius: 9999px;
+  background: rgba(245, 241, 234, 0.14);
+  border-radius: 0;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #1e3f2c;
+  background: #F1AE0A;
 }
 
-/* Glassmorphism utility */
+/* Glassmorphism utility updated to cream tint on black */
 .glass {
-  background: rgba(8, 18, 12, 0.75);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(16, 185, 129, 0.05);
+  background: rgba(10, 10, 10, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(245, 241, 234, 0.08);
 }
 
 .glass-glow {
-  background: rgba(16, 185, 129, 0.04);
+  background: rgba(241, 174, 10, 0.03);
   backdrop-filter: blur(8px);
-  border: 1px solid rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(241, 174, 10, 0.1);
 }
 
-/* Animations */
-@keyframes pulse-slow {
-  0%, 100% {
-    opacity: 0.12;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.24;
-    transform: scale(1.03);
-  }
-}
-
-.animate-pulse-slow {
-  animation: pulse-slow 8s infinite ease-in-out;
-}
-
-/* Technical grid background like premium SaaS products */
+/* Technical grid background: fine grid matching sandtech.com */
 .tech-grid {
-  background-image: linear-gradient(rgba(16, 185, 129, 0.04) 1px, transparent 1px),
-                    linear-gradient(90deg, rgba(16, 185, 129, 0.04) 1px, transparent 1px);
-  background-size: 32px 32px;
+  background-image: radial-gradient(circle at center, rgba(241, 174, 10, 0.04) 0%, transparent 65%),
+                    linear-gradient(rgba(245, 241, 234, 0.04) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(245, 241, 234, 0.04) 1px, transparent 1px);
+  background-size: 100% 100%, 64px 64px, 64px 64px;
   background-position: center center;
 }
 
+/* Keyframes for text rotator */
+@keyframes rotateOut {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-14px);
+    filter: blur(4px);
+  }
+}
+
+@keyframes rotateIn {
+  0% {
+    opacity: 0;
+    transform: translateY(14px);
+    filter: blur(4px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+.rotator-word-out {
+  animation: rotateOut 480ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.rotator-word-in {
+  animation: rotateIn 560ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Isometric SVG stack transitions */
+.plane-group {
+  transition: transform 500ms cubic-bezier(0.22, 1, 0.36, 1), opacity 400ms ease;
+}
+
+.plane-surface {
+  transition: fill 300ms ease, stroke 300ms ease;
+}
+
+.particle {
+  stroke-dasharray: 6 8;
+  animation: particle-flow 3s linear infinite;
+}
+
+@keyframes particle-flow {
+  from {
+    stroke-dashoffset: 0;
+  }
+  to {
+    stroke-dashoffset: -120;
+  }
+}
+
+.pulse-ring {
+  animation: pulse-ring-anim 2s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+}
+
+@keyframes pulse-ring-anim {
+  0% {
+    transform: scale(0.2);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+}
+
+/* Retro specs table styles */
+.specs-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  border: 1px solid rgba(245, 241, 234, 0.12);
+}
+
+.specs-table th {
+  font-family: var(--font-mono), monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #a39c8e;
+  background: #111111;
+  border-bottom: 1px solid rgba(245, 241, 234, 0.12);
+  padding: 12px 16px;
+  font-weight: 500;
+  text-align: left;
+}
+
+.specs-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(245, 241, 234, 0.06);
+  background: #0A0A0A;
+  color: #F5F1EA;
+}
+
+.specs-table tr:hover td {
+  background: #111111;
+}
+
+.badge-outline {
+  display: inline-block;
+  font-family: var(--font-mono), monospace;
+  font-size: 9px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border: 1px solid currentColor;
+  border-radius: 2px;
+}

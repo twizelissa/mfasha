@@ -148,12 +148,18 @@ export async function POST(req: Request) {
                 });
               } else {
                 failureCount++;
+                let msg = `Warning: Submission ${i + 1} returned status ${response.status}`;
+                if (response.status === 401) {
+                  msg += " (Unauthorized: Form requires Google Sign-In, e.g. 'Limit to 1 response' or restricted workspace)";
+                } else {
+                  msg += " (invalid parameters or failed validation)";
+                }
                 sendEvent({
                   type: "progress",
                   index: i + 1,
                   total: count,
                   success: false,
-                  message: `Warning: Submission ${i + 1} returned status ${response.status} (invalid parameters)`
+                  message: msg
                 });
               }
             } catch (err: any) {

@@ -94,7 +94,6 @@ export default function ProgressTracker({
         </div>
         
         <div className="h-60 bg-black border border-zinc-900 rounded-xl p-4 font-mono text-[11px] leading-relaxed overflow-y-auto space-y-1.5 scrollbar-thin">
-          <div className="text-zinc-500">&gt; Initializing worker connection...</div>
           {logs.map((log, idx) => {
             const isSuccess = log.toLowerCase().includes("success");
             const isError = log.toLowerCase().includes("error") || log.toLowerCase().includes("warning");
