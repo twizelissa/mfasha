@@ -32,7 +32,10 @@ export default function AdminPage() {
           "Authorization": `Bearer ${token}`
         }
       });
-      if (!res.ok) throw new Error("Failed to load transactions.");
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.error || `Failed to load transactions (Status ${res.status}).`);
+      }
       const data = await res.json();
       setPayments(data.payments || []);
     } catch (err: any) {

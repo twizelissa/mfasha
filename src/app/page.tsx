@@ -83,6 +83,9 @@ export default function HomePage() {
       }
       
       setParsedForm(data);
+      if (data.url) {
+        setFormUrl(data.url);
+      }
       setStep("preview");
     } catch (err: any) {
       setFetchError(err.message || "An unexpected error occurred.");
@@ -1051,10 +1054,39 @@ export default function HomePage() {
               </div>
             </div>
 
-            <p className="text-[9px] text-[#a39c8e]/80 leading-relaxed font-sans pt-3 border-t border-[#222222]">
-              🌐 Browser session injections. Automatically uses your active browser Google login cookies to bypass login screens and SSO blocks.
-            </p>
-            <p className="text-[9px] text-[#a39c8e]/50 leading-relaxed font-sans">
+            <div className="space-y-1.5 pt-3 border-t border-[#222222]">
+              <label className="text-xs font-mono font-bold text-[#a39c8e] uppercase tracking-widest block">Injection Mode</label>
+              <div className="flex bg-[#0A0A0A] p-1 rounded border border-border">
+                <button
+                  type="button"
+                  onClick={() => setInjectionMode("browser")}
+                  className={`flex-1 py-1.5 text-center text-[10px] font-mono font-bold rounded transition-all cursor-pointer ${
+                    injectionMode === "browser"
+                      ? "bg-primary text-background"
+                      : "text-[#a39c8e] hover:text-white"
+                  }`}
+                >
+                  Browser (Popup)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setInjectionMode("cloud")}
+                  className={`flex-1 py-1.5 text-center text-[10px] font-mono font-bold rounded transition-all cursor-pointer ${
+                    injectionMode === "cloud"
+                      ? "bg-primary text-background"
+                      : "text-[#a39c8e] hover:text-white"
+                  }`}
+                >
+                  Cloud (Backend)
+                </button>
+              </div>
+              <p className="text-[9px] text-[#a39c8e]/80 leading-relaxed font-sans mt-1">
+                {injectionMode === "browser"
+                  ? "🌐 Browser Mode: Uses your active browser login cookies to bypass login screens. Note: Subject to 'Limit to 1 response' restrictions of your signed-in Google account."
+                  : "☁️ Cloud Mode: Submits anonymous requests directly from the server. Best for public forms (allows unlimited responses without Google login restrictions)."}
+              </p>
+            </div>
+            <p className="text-[9px] text-[#a39c8e]/55 leading-relaxed font-sans">
               ⚠️ Note: Standard forms are fully supported. Forms with conditional logic (e.g. sections branching based on answers) require strict page history matching; if submissions are rejected, check the output in the popup window.
             </p>
 

@@ -13,6 +13,7 @@ export interface ParsedForm {
   fbzx: string;
   pageHistory: string;
   questions: FormQuestion[];
+  url?: string;
 }
 
 export async function parseGoogleForm(url: string): Promise<ParsedForm> {

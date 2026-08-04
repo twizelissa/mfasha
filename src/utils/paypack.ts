@@ -30,7 +30,7 @@ export async function getPaypackToken(): Promise<string> {
     return cachedToken;
   }
 
-  const response = await fetch("https://payments.paypack.rw/api/auth/agents", {
+  const response = await fetch("https://payments.paypack.rw/api/auth/agents/authorize", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

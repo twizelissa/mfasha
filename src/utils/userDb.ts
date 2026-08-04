@@ -1,12 +1,40 @@
 import { pool, initDb } from "./db";
+import fs from "fs";
+import path from "path";
 
 export interface ServerUser {
   email: string;
   quotaUsed: number;
   quotaLimit: number;
+  deviceId?: string;
+}
+
+const USERS_JSON_PATH = path.join(process.cwd(), "data", "users.json");
+
+function readUsersJson(): ServerUser[] {
+  try {
+    if (fs.existsSync(USERS_JSON_PATH)) {
+      const data = fs.readFileSync(USERS_JSON_PATH, "utf-8");
+      return JSON.parse(data);
+    }
+  } catch (err) {
+    console.error("Error reading users JSON file:", err);
+  }
+  return [];
+}
+
+function writeUsersJson(users: ServerUser[]): void {
+  try {
+    fs.writeFileSync(USERS_JSON_PATH, JSON.stringify(users, null, 2), "utf-8");
+  } catch (err) {
+    console.error("Error writing users JSON file:", err);
+  }
 }
 
 export async function getUsers(): Promise<ServerUser[]> {
+  if (!process.env.DATABASE_URL) {
+    return readUsersJson();
+  }
   await initDb();
   try {
     const res = await pool.query('SELECT email, quota_used AS "quotaUsed", quota_limit AS "quotaLimit" FROM users');
@@ -18,7 +46,6 @@ export async function getUsers(): Promise<ServerUser[]> {
 }
 
 export async function getOrCreateUser(email: string, deviceId?: string): Promise<ServerUser> {
-  await initDb();
   const lowercaseEmail = email.toLowerCase();
   if (lowercaseEmail === "twizelissa@gmail.com") {
     return {
@@ -27,6 +54,41 @@ export async function getOrCreateUser(email: string, deviceId?: string): Promise
       quotaLimit: 999999999,
     };
   }
+
+  if (!process.env.DATABASE_URL) {
+    const users = readUsersJson();
+    const existing = users.find((u) => u.email.toLowerCase() === lowercaseEmail);
+    if (existing) {
+      if (!existing.deviceId && deviceId) {
+        existing.deviceId = deviceId;
+        writeUsersJson(users);
+      }
+      return existing;
+    }
+
+    let quotaLimit = 20;
+    if (deviceId) {
+      const deviceRes = users.find(
+        (u) => u.deviceId === deviceId && u.email.toLowerCase() !== lowercaseEmail
+      );
+      if (deviceRes) {
+        quotaLimit = 0;
+        console.warn(`Device fingerprint ${deviceId} already used by ${deviceRes.email}. Setting quota_limit for ${lowercaseEmail} to 0.`);
+      }
+    }
+
+    const newUser: ServerUser = {
+      email: lowercaseEmail,
+      quotaUsed: 0,
+      quotaLimit,
+      deviceId,
+    };
+    users.push(newUser);
+    writeUsersJson(users);
+    return newUser;
+  }
+
+  await initDb();
   try {
     const res = await pool.query(
       'SELECT email, quota_used AS "quotaUsed", quota_limit AS "quotaLimit", device_id AS "deviceId" FROM users WHERE LOWER(email) = $1',
@@ -79,7 +141,6 @@ export async function getOrCreateUser(email: string, deviceId?: string): Promise
 }
 
 export async function incrementUserQuota(email: string, amount: number): Promise<ServerUser> {
-  await initDb();
   const lowercaseEmail = email.toLowerCase();
   if (lowercaseEmail === "twizelissa@gmail.com") {
     return {
@@ -88,6 +149,27 @@ export async function incrementUserQuota(email: string, amount: number): Promise
       quotaLimit: 999999999,
     };
   }
+
+  if (!process.env.DATABASE_URL) {
+    const users = readUsersJson();
+    const existing = users.find((u) => u.email.toLowerCase() === lowercaseEmail);
+    if (existing) {
+      existing.quotaUsed += amount;
+      writeUsersJson(users);
+      return existing;
+    }
+
+    const newUser: ServerUser = {
+      email: lowercaseEmail,
+      quotaUsed: amount,
+      quotaLimit: 20,
+    };
+    users.push(newUser);
+    writeUsersJson(users);
+    return newUser;
+  }
+
+  await initDb();
   try {
     const res = await pool.query(
       'SELECT email, quota_used AS "quotaUsed", quota_limit AS "quotaLimit" FROM users WHERE LOWER(email) = $1',
