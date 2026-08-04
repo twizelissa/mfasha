@@ -22,7 +22,8 @@ export default function HomePage() {
   const [parsedForm, setParsedForm] = useState<ParsedForm | null>(null);
   
   // Generation Options
-  const [responseCount, setResponseCount] = useState(50);
+  const [responseCount, setResponseCount] = useState(10);
+  const [inputValue, setInputValue] = useState("10");
   
   // Modal states
   const [isPaymentOpen, setIsPaymentOpen] = useState(false);
@@ -1014,23 +1015,39 @@ export default function HomePage() {
           <div className="lg:col-span-4 bg-[#111111] border border-border p-6 rounded-sm shadow-xl space-y-6">
             <div className="space-y-1">
               <span className="font-mono text-[9px] text-primary uppercase tracking-widest block">STEP 02 / CONFIG</span>
-              <h3 className="font-bold text-[#F5F1EA] uppercase">Injection Specs</h3>
-              <p className="text-[10px] text-[#a39c8e]">Configure payload counts</p>
+              <h3 className="font-bold text-[#F5F1EA] uppercase">Simulation Config</h3>
+              <p className="text-[10px] text-[#a39c8e]">Configure how many AI-simulated responses to generate</p>
             </div>
 
             {/* Slider & Manual Input */}
             <div className="space-y-4 text-left">
               <div className="flex justify-between items-center text-xs font-mono">
-                <span className="text-[#a39c8e]">INJECTIONS</span>
+                <span className="text-[#a39c8e]">RESPONSES</span>
                 <div className="flex items-center gap-1.5">
                   <input
-                    type="number"
-                    min={10}
-                    max={500}
-                    value={responseCount}
+                    type="text"
+                    inputMode="numeric"
+                    value={inputValue}
                     onChange={(e) => {
-                      const val = Math.max(10, Math.min(500, Number(e.target.value)));
-                      setResponseCount(val);
+                      const raw = e.target.value.replace(/[^0-9]/g, "");
+                      setInputValue(raw);
+                      const num = Number(raw);
+                      if (num >= 1 && num <= 500) {
+                        setResponseCount(num);
+                      }
+                    }}
+                    onBlur={() => {
+                      const num = Number(inputValue);
+                      if (!inputValue || num < 1) {
+                        setResponseCount(1);
+                        setInputValue("1");
+                      } else if (num > 500) {
+                        setResponseCount(500);
+                        setInputValue("500");
+                      } else {
+                        setResponseCount(num);
+                        setInputValue(String(num));
+                      }
                     }}
                     className="w-16 bg-[#0A0A0A] border border-border rounded px-2 py-1 text-xs text-white text-center font-bold font-mono focus:outline-none focus:border-primary"
                   />
@@ -1039,55 +1056,27 @@ export default function HomePage() {
               </div>
               <input
                 type="range"
-                min={10}
+                min={1}
                 max={500}
-                step={5}
+                step={1}
                 value={responseCount}
-                onChange={(e) => setResponseCount(Number(e.target.value))}
+                onChange={(e) => {
+                  const val = Number(e.target.value);
+                  setResponseCount(val);
+                  setInputValue(String(val));
+                }}
                 className="w-full h-1 bg-[#0A0A0A] rounded appearance-none cursor-pointer accent-primary border border-border"
               />
               <div className="flex justify-between text-[9px] text-[#a39c8e] font-mono">
-                <span>10</span>
+                <span>1</span>
                 <span>100</span>
                 <span>250</span>
                 <span>500</span>
               </div>
             </div>
 
-            <div className="space-y-1.5 pt-3 border-t border-[#222222]">
-              <label className="text-xs font-mono font-bold text-[#a39c8e] uppercase tracking-widest block">Injection Mode</label>
-              <div className="flex bg-[#0A0A0A] p-1 rounded border border-border">
-                <button
-                  type="button"
-                  onClick={() => setInjectionMode("browser")}
-                  className={`flex-1 py-1.5 text-center text-[10px] font-mono font-bold rounded transition-all cursor-pointer ${
-                    injectionMode === "browser"
-                      ? "bg-primary text-background"
-                      : "text-[#a39c8e] hover:text-white"
-                  }`}
-                >
-                  Browser (Popup)
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setInjectionMode("cloud")}
-                  className={`flex-1 py-1.5 text-center text-[10px] font-mono font-bold rounded transition-all cursor-pointer ${
-                    injectionMode === "cloud"
-                      ? "bg-primary text-background"
-                      : "text-[#a39c8e] hover:text-white"
-                  }`}
-                >
-                  Cloud (Backend)
-                </button>
-              </div>
-              <p className="text-[9px] text-[#a39c8e]/80 leading-relaxed font-sans mt-1">
-                {injectionMode === "browser"
-                  ? "🌐 Browser Mode: Uses your active browser login cookies to bypass login screens. Note: Subject to 'Limit to 1 response' restrictions of your signed-in Google account."
-                  : "☁️ Cloud Mode: Submits anonymous requests directly from the server. Best for public forms (allows unlimited responses without Google login restrictions)."}
-              </p>
-            </div>
-            <p className="text-[9px] text-[#a39c8e]/55 leading-relaxed font-sans">
-              ⚠️ Note: Standard forms are fully supported. Forms with conditional logic (e.g. sections branching based on answers) require strict page history matching; if submissions are rejected, check the output in the popup window.
+            <p className="text-[9px] text-[#a39c8e]/60 leading-relaxed font-sans pt-3 border-t border-[#222222]">
+              🧠 Generates AI-simulated survey responses that closely mimic real human answers. Each response is uniquely randomized with balanced distributions across all question types.
             </p>
 
             {/* Pricing Breakdowns */}
