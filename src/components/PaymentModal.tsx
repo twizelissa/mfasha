@@ -81,10 +81,6 @@ export default function PaymentModal({
             setIsProcessing(false);
             setMomoStep("success");
             localStorage.removeItem("mfasha_pending_tx_id");
-            
-            // Show success for 1.5 seconds, then complete
-            await new Promise((resolve) => setTimeout(resolve, 1500));
-            onSuccess(transactionId);
           } else if (data.status === "rejected") {
             clearInterval(intervalId);
             setIsProcessing(false);
@@ -175,7 +171,9 @@ export default function PaymentModal({
     // Simulate payment gateway authorization delay
     await new Promise((resolve) => setTimeout(resolve, 2500));
     setIsProcessing(false);
-    onSuccess("CARD_MOCK_" + Math.random().toString(36).substring(2, 9).toUpperCase());
+    const txId = "CARD_MOCK_" + Math.random().toString(36).substring(2, 9).toUpperCase();
+    setTransactionId(txId);
+    setMomoStep("success");
   };
 
   return (
@@ -437,14 +435,20 @@ export default function PaymentModal({
               </div>
  
             ) : (
-              <div className="flex flex-col items-center justify-center py-8 text-center space-y-3">
+              <div className="flex flex-col items-center justify-center py-6 text-center space-y-4">
                 <div className="w-12 h-12 rounded-full bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-xl font-bold shadow-lg shadow-emerald-500/10 animate-bounce">
                   ✓
                 </div>
-                <div className="space-y-0.5">
-                  <p className="text-sm font-bold text-white">Payment Received</p>
-                  <p className="text-xs text-zinc-400">Response generation will start immediately.</p>
+                <div className="space-y-1">
+                  <p className="text-sm font-bold text-white">Payment Approved!</p>
+                  <p className="text-xs text-zinc-400">Click below to launch the simulator and generate responses.</p>
                 </div>
+                <button
+                  onClick={() => onSuccess(transactionId)}
+                  className="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs rounded-xl shadow-lg shadow-emerald-500/10 active:scale-95 transition-all cursor-pointer uppercase tracking-wider font-mono text-[10px]"
+                >
+                  🚀 Launch Simulator
+                </button>
               </div>
             )
           ) : (
