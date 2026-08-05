@@ -30,6 +30,7 @@ export default function HomePage() {
   const [injectionMode, setInjectionMode] = useState<"cloud" | "browser">("browser");
   const [showBypassPrompt, setShowBypassPrompt] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [popupInstance, setPopupInstance] = useState<Window | null>(null);
   
   // Progress states
   const [currentProgress, setCurrentProgress] = useState(0);
@@ -101,19 +102,51 @@ export default function HomePage() {
       return;
     }
     
+    // Open the popup window immediately in response to a direct user click.
+    // This bypasses browser popup blockers which would otherwise block popups opened asynchronously (e.g. inside setTimeout/then callbacks after payment checks).
+    let p: Window | null = null;
+    try {
+      p = window.open("about:blank", "mfasha-popup", "width=500,height=400,scrollbars=yes,resizable=yes");
+      if (p) {
+        p.document.write(`
+          <html>
+            <head>
+              <title>Mfasha AI Simulator</title>
+              <style>
+                body { background: #050505; color: #a39c8e; font-family: monospace; text-align: center; padding-top: 100px; margin: 0; }
+                .spinner { border: 4px solid #111; border-top: 4px solid #F1AE0A; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 20px auto; }
+                @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+                h3 { color: #F5F1EA; font-size: 14px; letter-spacing: 0.1em; }
+                p { font-size: 11px; color: #a39c8e; }
+              </style>
+            </head>
+            <body>
+              <div class="spinner"></div>
+              <h3>AWAITING PAYMENT VERIFICATION</h3>
+              <p>Please authorize the payment prompt on your mobile phone.</p>
+            </body>
+          </html>
+        `);
+      }
+    } catch (err) {
+      console.error("Popup window pre-open block error:", err);
+    }
+    
+    setPopupInstance(p);
+
     if (premiumCount > 0) {
       setIsPaymentOpen(true);
     } else {
-      executeSubmission();
+      executeSubmission(undefined, p);
     }
   };
 
   const handlePaymentSuccess = (txId?: string) => {
     setIsPaymentOpen(false);
-    executeSubmission(txId);
+    executeSubmission(txId, popupInstance);
   };
 
-  const executeSubmission = async (txId?: string, modeOverride?: "cloud" | "browser") => {
+  const executeSubmission = async (txId?: string, existingPopup?: Window | null) => {
     if (!parsedForm) return;
     
     setStep("progress");
@@ -127,30 +160,36 @@ export default function HomePage() {
     let localSuccess = 0;
     let localFailure = 0;
 
-    const activeMode = modeOverride || injectionMode;
+    // Browser mode is used exclusively
+    setLogs([]);
+    
+    const formResponseUrl = formUrl.replace("/viewform", "/formResponse").replace("/formResponse", "/formResponse");
 
-    if (activeMode === "browser") {
-      setLogs([]);
-      
-      const formResponseUrl = formUrl.replace("/viewform", "/formResponse").replace("/formResponse", "/formResponse");
-
-      // Open a single popup window to act as the top-level navigation container.
-      // This bypasses the SameSite=Lax cookie restrictions that block hidden subframes/iframes from sending session cookies.
-      let popup: Window | null = null;
+    // Use pre-opened popup, or fallback to opening a new one
+    let popup = existingPopup || popupInstance;
+    if (!popup) {
       try {
         popup = window.open("about:blank", "mfasha-popup", "width=500,height=400,scrollbars=yes,resizable=yes");
       } catch (err) {
         console.error("Popup window block error", err);
       }
+    }
 
-      if (!popup) {
-        setLogs((prev) => [
-          ...prev,
-          "❌ Popup window blocked. Please click the allow popup button in your browser address bar to proceed."
-        ]);
-        setIsSubmittingCompleted(true);
-        return;
-      }
+    if (!popup) {
+      setLogs((prev) => [
+        ...prev,
+        "❌ Popup window blocked. Please click the allow popup button in your browser address bar to proceed."
+      ]);
+      setIsSubmittingCompleted(true);
+      return;
+    }
+
+    // Reset popup location to clean slate
+    try {
+      popup.location.href = "about:blank";
+    } catch (e) {
+      console.error("Failed to reset popup location:", e);
+    }
 
       for (let i = 0; i < responseCount; i++) {
         try {
@@ -230,102 +269,6 @@ export default function HomePage() {
         cost: totalCost
       });
 
-      return;
-    }
-    
-    try {
-      const res = await fetch("/api/submit-responses", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          url: formUrl,
-          questions: parsedForm.questions,
-          count: responseCount,
-          fbzx: parsedForm.fbzx,
-          formTitle: parsedForm.title,
-          pageHistory: parsedForm.pageHistory,
-          email: user?.email || "anonymous@ur.ac.rw",
-          transactionId: txId
-        })
-      });
-      
-      if (!res.body) {
-        throw new Error("Response body is not readable");
-      }
-      
-      const reader = res.body.getReader();
-      const decoder = new TextDecoder();
-      let buffer = "";
-      
-      while (true) {
-        const { value, done } = await reader.read();
-        if (done) break;
-        
-        buffer += decoder.decode(value, { stream: true });
-        const parts = buffer.split("\n\n");
-        buffer = parts.pop() || "";
-        
-        for (const part of parts) {
-          if (part.startsWith("data: ")) {
-            const jsonStr = part.substring(6);
-            try {
-              const event = JSON.parse(jsonStr);
-              if (event.type === "progress") {
-                setCurrentProgress(event.index);
-                if (event.success) {
-                  localSuccess++;
-                  setSuccessCount(localSuccess);
-                } else {
-                  localFailure++;
-                  setFailureCount(localFailure);
-                  if (event.message.includes("status 401") || event.message.includes("Unauthorized")) {
-                    setShowBypassPrompt(true);
-                  }
-                }
-                setLogs(prev => [...prev, event.message]);
-              } else if (event.type === "done") {
-                setIsSubmittingCompleted(true);
-                const freeUsed = Math.min(responseCount, remainingFree);
-                incrementQuota(freeUsed);
-                
-                saveRunToHistory({
-                  url: formUrl,
-                  title: parsedForm.title,
-                  total: responseCount,
-                  success: event.successCount !== undefined ? event.successCount : localSuccess,
-                  failed: event.failureCount !== undefined ? event.failureCount : localFailure,
-                  cost: totalCost
-                });
-              } else if (event.type === "error") {
-                setLogs(prev => [...prev, `Critical Error: ${event.error}`]);
-                setIsSubmittingCompleted(true);
-                saveRunToHistory({
-                  url: formUrl,
-                  title: parsedForm.title,
-                  total: responseCount,
-                  success: localSuccess,
-                  failed: responseCount - localSuccess,
-                  cost: totalCost
-                });
-              }
-            } catch (e) {
-              console.error("Error parsing stream chunk", e);
-            }
-          }
-        }
-      }
-    } catch (err: any) {
-      setLogs(prev => [...prev, `Fatal Error: ${err.message}`]);
-      setIsSubmittingCompleted(true);
-      saveRunToHistory({
-        url: formUrl,
-        title: parsedForm.title,
-        total: responseCount,
-        success: localSuccess,
-        failed: responseCount - localSuccess,
-        cost: totalCost
-      });
-    }
   };
 
   const saveRunToHistory = (run: {
@@ -1146,7 +1089,17 @@ export default function HomePage() {
       {isPaymentOpen && (
         <PaymentModal
           isOpen={isPaymentOpen}
-          onClose={() => setIsPaymentOpen(false)}
+          onClose={() => {
+            setIsPaymentOpen(false);
+            if (popupInstance) {
+              try {
+                popupInstance.close();
+              } catch (e) {
+                console.error("Failed to close popup:", e);
+              }
+              setPopupInstance(null);
+            }
+          }}
           onSuccess={handlePaymentSuccess}
           amount={totalCost}
           responseCount={responseCount}
